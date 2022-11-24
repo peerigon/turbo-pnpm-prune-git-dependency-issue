@@ -1,73 +1,32 @@
-# Turborepo starter
-
-This is an official pnpm starter turborepo.
-
-## What's inside?
-
-This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
+# Turborepo prune pnpm issue
+Run:
+```sh
+ docker build -f apps/web/Dockerfile -t "turbo-prune-example" .
 ```
-cd my-turborepo
-pnpm run build
+and it fails with
+```log
+ => ERROR [installer  8/11] RUN pnpm install                                                                                                             3.0s
+------
+ > [installer  8/11] RUN pnpm install:
+#19 2.826 Scope: all 5 workspace projects
+#19 2.877 Lockfile is up to date, resolution step is skipped
+#19 2.884  ERR_PNPM_LOCKFILE_MISSING_DEPENDENCY  Broken lockfile: no entry for 'github.com/peerigon/dashboard-icons/ce27ef933144e09cef3911025f3649040a8571b6' in pnpm-lock.yaml
+#19 2.884 
+#19 2.884 This issue is probably caused by a badly resolved merge conflict.
+#19 2.884 To fix the lockfile, run 'pnpm install --no-frozen-lockfile'.
+------
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
+Alternative run:
+```sh
+pnpm turbo prune --scope=web --docker                          
 ```
-cd my-turborepo
-pnpm run dev
+and see that 
+```yaml
+github.com/peerigon/dashboard-icons/ce27ef933144e09cef3911025f3649040a8571b6:
+    resolution: {tarball: https://codeload.github.com/peerigon/dashboard-icons/tar.gz/ce27ef933144e09cef3911025f3649040a8571b6}
+    name: dashboard-icons
+    version: 1.0.0
+    dev: false
 ```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-pnpm dlx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
-```
-pnpm dlx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Pipelines](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+is missing in the `out/pnpm-lock.yaml`
